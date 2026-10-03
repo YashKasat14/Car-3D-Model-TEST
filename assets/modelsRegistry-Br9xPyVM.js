@@ -1,0 +1,1 @@
+import{d as o,e as s,h as i}from"./index-DvbcWTN4.js";function l(){return o().map(t=>t.manifest)}function a(e){const t=o().filter(r=>r.id!==e.id),n={id:e.id,name:e.name,uploadDate:new Date().toISOString(),fileSizeFormatted:"1.0 MB",fileType:"GLB",componentCount:e.components.length,triangleCount:0,manifest:e};i([n,...t])}function c(e){s(e)}export{c as d,l as g,a as s};
