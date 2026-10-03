@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Sliders, Wind, Camera, Layers, Focus, Undo2, Redo2,
-  RotateCcw, Gauge, Activity, Palette, Hand
+  Sliders, Wind, Camera, Layers, Palette, Hand, Focus,
+  Undo2, Redo2, RotateCcw
 } from 'lucide-react';
 import { useSimulationStore, CameraPreset, XRayMode } from '../../stores/simulationStore';
 

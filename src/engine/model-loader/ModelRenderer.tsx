@@ -94,6 +94,7 @@ export const ModelRenderer: React.FC<ModelRendererProps> = ({ manifest }) => {
   const wasSinglePinchingRef = useRef<boolean>(false);
   const handRaycasterRef = useRef<THREE.Raycaster>(new THREE.Raycaster());
   const handNdcRef = useRef<THREE.Vector2>(new THREE.Vector2());
+  const probeNdcRef = useRef<THREE.Vector2>(new THREE.Vector2());
   const handCamDirRef = useRef<THREE.Vector3>(new THREE.Vector3());
   const handIntersectionRef = useRef<THREE.Vector3>(new THREE.Vector3());
   const tempTargetWorldRef = useRef<THREE.Vector3>(new THREE.Vector3());
@@ -371,10 +372,10 @@ export const ModelRenderer: React.FC<ModelRendererProps> = ({ manifest }) => {
               { x: 0.009, y: 0.009 },
               { x: -0.009, y: -0.009 }
             ];
-            const probeRay = new THREE.Raycaster();
+            const probeRay = handRaycasterRef.current;
             for (const off of probeOffsets) {
-              const probeNdc = new THREE.Vector2(handNdcRef.current.x + off.x, handNdcRef.current.y + off.y);
-              probeRay.setFromCamera(probeNdc, camera);
+              probeNdcRef.current.set(handNdcRef.current.x + off.x, handNdcRef.current.y + off.y);
+              probeRay.setFromCamera(probeNdcRef.current, camera);
               const probeHits = probeRay.intersectObjects(visibleMeshes, false);
               if (probeHits.length > 0) {
                 const hitMesh = probeHits[0].object;

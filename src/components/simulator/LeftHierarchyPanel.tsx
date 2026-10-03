@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import {
   Search, ChevronRight, ChevronDown, Layers, Box, EyeOff, Eye,
-  Maximize2, RotateCcw, PanelLeftClose, PanelLeftOpen, Wrench
+  Maximize2, PanelLeftClose, PanelLeftOpen, RotateCcw, Wrench
 } from 'lucide-react';
 import { useSimulationStore } from '../../stores/simulationStore';
 

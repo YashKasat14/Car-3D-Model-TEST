@@ -63,6 +63,8 @@ export const HomeHeroView: React.FC = () => {
       const buffer = ev.target?.result;
       if (!buffer) {
         setIsProcessing(false);
+        setNotification(null);
+        alert('Could not read the selected 3D model file.');
         return;
       }
 
@@ -76,11 +78,13 @@ export const HomeHeroView: React.FC = () => {
           refreshModelHistory();
           setActiveModel(analysis.manifest);
           setIsProcessing(false);
+          setNotification(null);
           setActiveView('simulator');
         } catch (err) {
-          console.error(err);
+          console.error('Failed to process uploaded .OBJ file', err);
           alert('Failed to parse .OBJ file.');
           setIsProcessing(false);
+          setNotification(null);
         }
       } else {
         const gltfLoader = new GLTFLoader();
@@ -88,20 +92,35 @@ export const HomeHeroView: React.FC = () => {
           buffer as ArrayBuffer,
           '',
           async (gltf) => {
-            const analysis = analyze3DModel(gltf.scene, cleanName, fileUrl);
-            await addModelToHistory(file, file.name, analysis.manifest);
-            refreshModelHistory();
-            setActiveModel(analysis.manifest);
-            setIsProcessing(false);
-            setActiveView('simulator');
+            try {
+              const analysis = analyze3DModel(gltf.scene, cleanName, fileUrl);
+              await addModelToHistory(file, file.name, analysis.manifest);
+              refreshModelHistory();
+              setActiveModel(analysis.manifest);
+              setIsProcessing(false);
+              setNotification(null);
+              setActiveView('simulator');
+            } catch (err) {
+              console.error('Failed to process uploaded 3D file', err);
+              alert('Failed to process the selected 3D file.');
+              setIsProcessing(false);
+              setNotification(null);
+            }
           },
           (err) => {
-            console.error(err);
+            console.error('Failed to parse uploaded 3D file', err);
             alert('Failed to parse 3D file.');
             setIsProcessing(false);
+            setNotification(null);
           }
         );
       }
+    };
+    reader.onerror = () => {
+      console.error('Failed to read uploaded 3D model', reader.error);
+      alert('Could not read the selected 3D model file.');
+      setIsProcessing(false);
+      setNotification(null);
     };
     reader.readAsArrayBuffer(file);
   };
@@ -122,6 +141,7 @@ export const HomeHeroView: React.FC = () => {
     }
 
     setIsProcessing(false);
+    setNotification(null);
     setActiveView('simulator');
   };
 

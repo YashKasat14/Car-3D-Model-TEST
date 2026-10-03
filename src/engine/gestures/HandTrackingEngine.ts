@@ -75,6 +75,7 @@ class HandTrackingEngine {
   private isMediaPipeActive: boolean = false;
   private isProcessingMediaPipe: boolean = false;
   private videoFrameCallbackId: number | null = null;
+  private checkIntervalId: any = null;
   // Ultra-Fast Neural Inference Canvas (320x180: 36x faster WASM memory transfer)
   private offscreenCanvas: HTMLCanvasElement | null = null;
   private offscreenCtx: CanvasRenderingContext2D | null = null;
@@ -211,13 +212,16 @@ class HandTrackingEngine {
       }
     } else if (!w.Hands) {
       // If script is still loading from CDN, poll once every 300ms until loaded
-      const checkInterval = setInterval(() => {
+      if (this.checkIntervalId !== null) clearInterval(this.checkIntervalId);
+      this.checkIntervalId = setInterval(() => {
         if (!this.isRunning) {
-          clearInterval(checkInterval);
+          if (this.checkIntervalId !== null) clearInterval(this.checkIntervalId);
+          this.checkIntervalId = null;
           return;
         }
         if ((window as any).Hands) {
-          clearInterval(checkInterval);
+          if (this.checkIntervalId !== null) clearInterval(this.checkIntervalId);
+          this.checkIntervalId = null;
           this.initMediaPipe();
         }
       }, 300);
@@ -226,6 +230,10 @@ class HandTrackingEngine {
 
   public stopTracking() {
     this.isRunning = false;
+    if (this.checkIntervalId !== null) {
+      clearInterval(this.checkIntervalId);
+      this.checkIntervalId = null;
+    }
     if (this.animFrameId !== null) {
       cancelAnimationFrame(this.animFrameId);
       this.animFrameId = null;

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   Video, Pause, Play, Square, Camera, Sparkles, FolderOpen,
   Maximize, Minimize, ChevronLeft, Plus, ChevronDown, Check,
-  Activity, Layers, Upload, Eye, Hand, Focus, Undo2, Redo2
+  Activity, Hand, Undo2, Redo2, Upload, Focus
 } from 'lucide-react';
 import { useSimulationStore } from '../../stores/simulationStore';
 import { soundEngine } from '../../engine/audio/SoundEngine';
@@ -67,6 +67,22 @@ export const TopNavBar: React.FC = () => {
     animId = requestAnimationFrame(countFrames);
     return () => cancelAnimationFrame(animId);
   }, []);
+
+  // Fullscreen state synchronization with browser
+  useEffect(() => {
+    const handleFsChange = () => setIsFullscreen(Boolean(document.fullscreenElement));
+    document.addEventListener('fullscreenchange', handleFsChange);
+    return () => document.removeEventListener('fullscreenchange', handleFsChange);
+  }, []);
+
+  const toggleFullscreen = () => {
+    soundEngine.playSelect();
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  };
 
   const [recordedSeconds, setRecordedSeconds] = useState(0);
 
@@ -415,6 +431,15 @@ export const TopNavBar: React.FC = () => {
             <Activity className="w-3 h-3 text-red-500 animate-pulse" />
             <span>{fps} FPS</span>
           </div>
+
+          {/* Fullscreen Toggle */}
+          <button
+            onClick={toggleFullscreen}
+            title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen (F11)'}
+            className="hidden sm:flex items-center gap-1.5 p-1.5 rounded-xl bg-dark-900/80 hover:bg-dark-800 text-dark-300 hover:text-white border border-dark-700 transition-colors"
+          >
+            {isFullscreen ? <Minimize className="w-3.5 h-3.5" /> : <Maximize className="w-3.5 h-3.5" />}
+          </button>
 
           {/* Website Simulator Recording System Controls */}
           <div className="relative flex items-center">

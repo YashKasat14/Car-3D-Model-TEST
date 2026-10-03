@@ -69,6 +69,19 @@ export const SceneViewport: React.FC = () => {
 
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const [isColorControlOpen, setIsColorControlOpen] = useState(false);
+  const notifTimeoutRef = useRef<any>(null);
+
+  const flashNotification = (msg: string) => {
+    if (notifTimeoutRef.current) clearTimeout(notifTimeoutRef.current);
+    setNotification(msg);
+    notifTimeoutRef.current = setTimeout(() => setNotification(null), 3500);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (notifTimeoutRef.current) clearTimeout(notifTimeoutRef.current);
+    };
+  }, []);
 
   // Drag & drop upload handler for ANY 3D model
   const handleDragOver = (e: React.DragEvent) => {
@@ -119,8 +132,7 @@ export const SceneViewport: React.FC = () => {
           await addModelToHistory(file, file.name, analysis.manifest);
           refreshModelHistory();
           setActiveModel(analysis.manifest);
-          setNotification(`Loaded ${cleanName} (${analysis.meshCount} CAD parts).`);
-          setTimeout(() => setNotification(null), 3500);
+          flashNotification(`Loaded ${cleanName} (${analysis.meshCount} CAD parts).`);
         } catch (err) {
           console.error(err);
           alert('Failed to parse .OBJ file.');
@@ -136,11 +148,10 @@ export const SceneViewport: React.FC = () => {
             refreshModelHistory();
             setActiveModel(analysis.manifest);
             if (analysis.isSingleMergedMesh) {
-              setNotification(`Loaded ${cleanName} (Single merged mesh detected).`);
+              flashNotification(`Loaded ${cleanName} (Single merged mesh detected).`);
             } else {
-              setNotification(`Loaded ${cleanName} (${analysis.meshCount} CAD components).`);
+              flashNotification(`Loaded ${cleanName} (${analysis.meshCount} CAD components).`);
             }
-            setTimeout(() => setNotification(null), 3500);
           },
           (err) => {
             console.error(err);

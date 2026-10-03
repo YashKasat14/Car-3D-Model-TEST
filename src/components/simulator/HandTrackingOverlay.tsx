@@ -128,6 +128,10 @@ export const HandTrackingOverlay: React.FC = () => {
     } else if (!handTrackingActive) {
       handTrackingEngine.stopTracking();
     }
+    return () => {
+      // Ensure camera hardware and tracking loop are stopped when component unmounts
+      handTrackingEngine.stopTracking();
+    };
   }, [handTrackingActive]);
 
   if (!handTrackingActive) return null;

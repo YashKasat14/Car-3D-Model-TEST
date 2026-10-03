@@ -932,7 +932,36 @@ describe('Website-Only Viewport Recorder (No Whole-Device Capturing)', () => {
     expect(viewportRecorder.isCurrentlyRecording()).toBe(false);
     useSimulationStore.setState({ handTrackingActive: false });
   });
+
+  it('generates valid Gzip and Brotli pre-compressed asset files in production build', async () => {
+    const fs = await import('node:fs');
+    const path = await import('node:path');
+    const zlib = await import('node:zlib');
+
+    const distDir = path.resolve(process.cwd(), 'dist');
+    expect(fs.existsSync(distDir)).toBe(true);
+
+    const indexHtml = path.join(distDir, 'index.html');
+    expect(fs.existsSync(indexHtml)).toBe(true);
+
+    const indexHtmlGz = `${indexHtml}.gz`;
+    const indexHtmlBr = `${indexHtml}.br`;
+    expect(fs.existsSync(indexHtmlGz)).toBe(true);
+    expect(fs.existsSync(indexHtmlBr)).toBe(true);
+
+    // Verify decompression yields authentic original contents
+    const rawContent = fs.readFileSync(indexHtml);
+    const unGz = zlib.gunzipSync(fs.readFileSync(indexHtmlGz));
+    expect(unGz.toString()).toBe(rawContent.toString());
+
+    const unBr = zlib.brotliDecompressSync(fs.readFileSync(indexHtmlBr));
+    expect(unBr.toString()).toBe(rawContent.toString());
+
+    // Verify compressed size is significantly smaller
+    expect(fs.statSync(indexHtmlBr).size).toBeLessThan(rawContent.length);
+  });
 });
+
 
 
 
