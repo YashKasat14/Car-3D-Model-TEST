@@ -117,6 +117,7 @@ function preCompressionPlugin(): Plugin {
 }
 
 export default defineConfig({
+  base: './',
   plugins: [
     react(),
     preCompressionPlugin()

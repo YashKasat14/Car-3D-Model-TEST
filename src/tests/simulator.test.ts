@@ -351,90 +351,28 @@ describe('Mouse Scroll Front/Back Depth Translation', () => {
   });
 });
 
-describe('AI 3D Model Acoustic Sound Analyzer', () => {
-  it('classifies authentic Formula 1 V6 Turbo Hybrid sound for racing cars', async () => {
-    const { analyzeModelSound } = await import('../services/aiSoundAnalyzer');
-    const mockF1Manifest: any = {
-      id: 'f1-rb19',
-      name: 'Oracle Red Bull Racing RB19',
-      category: 'Automotive',
-      description: 'Championship-winning Formula 1 racer with ground-effect floor and turbo hybrid power unit.',
-      components: [
-        { name: 'Front Wing', nodeName: 'Front_Wing', category: 'Aerodynamics' },
-        { name: 'Rear Diffuser', nodeName: 'Diffuser', category: 'Aerodynamics' }
-      ]
-    };
+describe('Mechanical & Haptic UI Sound Synthesizer', () => {
+  it('controls volume and mute state cleanly', () => {
+    soundEngine.setVolume(0.8);
+    expect(soundEngine.getVolume()).toBe(0.8);
 
-    const profile = analyzeModelSound(mockF1Manifest);
-    expect(profile.hasSound).toBe(true);
-    expect(profile.archetype).toBe('f1_turbo_hybrid');
-    expect(profile.maxRpm).toBe(15000);
-    expect(profile.acousticDetails.hasTurboWhistle).toBe(true);
-    expect(profile.confidenceScore).toBeGreaterThanOrEqual(0.95);
+    const muted = soundEngine.toggleMute();
+    expect(muted).toBe(true);
+    expect(soundEngine.getMuted()).toBe(true);
+
+    soundEngine.toggleMute();
+    expect(soundEngine.getMuted()).toBe(false);
   });
 
-  it('classifies authentic jet turbofan sound for aircraft', async () => {
-    const { analyzeModelSound } = await import('../services/aiSoundAnalyzer');
-    const mockJetManifest: any = {
-      id: 'boeing-777',
-      name: 'Boeing 777-300ER Turbofan',
-      category: 'Aviation',
-      description: 'Twin-engine long-range commercial jetliner.',
-      components: [{ name: 'Turbofan Engine L', nodeName: 'Engine_L', category: 'Propulsion' }]
-    };
-
-    const profile = analyzeModelSound(mockJetManifest);
-    expect(profile.hasSound).toBe(true);
-    expect(profile.archetype).toBe('jet_turbofan');
-    expect(profile.acousticDetails.hasTurbineWhine).toBe(true);
-  });
-
-  it('classifies authentic marine diesel sound with foghorn for ships', async () => {
-    const { analyzeModelSound } = await import('../services/aiSoundAnalyzer');
-    const mockShipManifest: any = {
-      id: 'container-ship',
-      name: 'Triple-E Class Container Ship Vessel',
-      category: 'Marine',
-      description: 'Ultra-large ocean container vessel.',
-      components: [{ name: 'Hull', nodeName: 'Hull_Main', category: 'Structure' }]
-    };
-
-    const profile = analyzeModelSound(mockShipManifest);
-    expect(profile.hasSound).toBe(true);
-    expect(profile.archetype).toBe('marine_ship');
-    expect(profile.acousticDetails.hasFogHorn).toBe(true);
-  });
-
-  it('classifies biological primal roar for animal / creature models', async () => {
-    const { analyzeModelSound } = await import('../services/aiSoundAnalyzer');
-    const mockCreatureManifest: any = {
-      id: 'trex',
-      name: 'Tyrannosaurus Rex Dinosaur Specimen',
-      category: 'Biology',
-      description: 'Apex predator dinosaur skeletal and organic model.',
-      components: [{ name: 'Skull', nodeName: 'Cranial_Structure', category: 'Anatomy' }]
-    };
-
-    const profile = analyzeModelSound(mockCreatureManifest);
-    expect(profile.hasSound).toBe(true);
-    expect(profile.archetype).toBe('animal_creature');
-    expect(profile.acousticDetails.hasBiologicalGrowl).toBe(true);
-  });
-
-  it('identifies static objects without sound (hasSound: false, sound option invisible)', async () => {
-    const { analyzeModelSound } = await import('../services/aiSoundAnalyzer');
-    const mockChairManifest: any = {
-      id: 'ergonomic-chair',
-      name: 'Modern Office Chair Furniture',
-      category: 'Static Prop',
-      description: 'Ergonomic mesh office desk chair.',
-      components: [{ name: 'Seat Pad', nodeName: 'Cushion', category: 'Structure' }]
-    };
-
-    const profile = analyzeModelSound(mockChairManifest);
-    // CRITICAL: When the model does not have sound, hasSound MUST be false so UI hides it
-    expect(profile.hasSound).toBe(false);
-    expect(profile.archetype).toBe('none');
+  it('provides safe UI sound triggers without throwing errors in headless environment', () => {
+    expect(() => soundEngine.playUiClick()).not.toThrow();
+    expect(() => soundEngine.playSelect()).not.toThrow();
+    expect(() => soundEngine.playDetach()).not.toThrow();
+    expect(() => soundEngine.playSnap()).not.toThrow();
+    expect(() => soundEngine.playRemove()).not.toThrow();
+    expect(() => soundEngine.playCameraView()).not.toThrow();
+    expect(() => soundEngine.playWarning()).not.toThrow();
+    expect(() => soundEngine.playExplodeSweep(50)).not.toThrow();
   });
 });
 

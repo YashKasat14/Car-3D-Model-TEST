@@ -34,21 +34,17 @@
 
 ## 🚀 Quick Start & Running Locally
 
-### Prerequisites
-- Node.js 18+ (tested on Node v24)
-- Modern WebGL2-compatible browser (Chrome, Edge, Firefox, Safari)
+### ⚡ One-Click Instant Launch (Windows)
+Simply double-click the **[`START.bat`](file:///C:/Users/yashs/.gemini/antigravity-ide/scratch/universal-3d-engineering-simulator/START.bat)** file in the project folder!
+It will:
+1. Automatically launch the high-speed local engine server (`npm run dev`)
+2. Open your default web browser directly to **[http://localhost:3000/](http://localhost:3000/)**
 
-### Installation
+---
+
+### Command Line Alternative
 ```bash
-# Navigate to project directory
-cd C:\Users\yashs\.gemini\antigravity-ide\scratch\universal-3d-engineering-simulator
-
-# Install dependencies
-npm.cmd install
-```
-
-### Run Local Development Server
-```bash
+# Start dev server
 npm.cmd run dev
 ```
 Open **[http://localhost:3000/](http://localhost:3000/)** in your browser.
